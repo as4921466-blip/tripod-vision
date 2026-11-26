@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripod Vision | Admin Dashboard</title>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Arial, sans-serif;
+  background: #080808;
+  color: #fff;
+  min-height: 100vh;
+}
+
+header {
+  padding: 22px 7%;
+  border-bottom: 1px solid #292929;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+header h2 { color: #d4af37; letter-spacing: 2px; }
+header span { color: #aaa; font-size: 13px; letter-spacing: 2px; }
+
+main {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.panel {
+  background: #141414;
+  border: 1px solid #292929;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 25px;
+}
+
+h1, h2 { margin-bottom: 20px; }
+h1 { color: #d4af37; }
+p { color: #bbb; line-height: 1.6; }
+
+input, select, textarea {
+  width: 100%;
+  padding: 14px;
+  background: #090909;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: white;
+  margin: 12px 0;
+  font-size: 14px;
+}
+
+textarea { min-height: 100px; resize: vertical; }
+
+label {
+  display: block;
+  color: #d4af37;
+  margin-top: 15px;
+}
+
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  background: #d4af37;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 5px;
+}
+
+button:hover { opacity: .85; }
+.logout { background: #333; color: white; }
+.delete-btn { background: #a52a2a; color: white; }
+
+.message-card, .project-card {
+  background: #202020;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 15px 0;
+  border-left: 3px solid #d4af37;
+  overflow-wrap: anywhere;
+}
+
+.message-card p { margin: 10px 0; }
+.status { color: #d4af37; font-size: 13px; font-weight: bold; }
+
+#dashboard { display: none; }
+#loginMessage, #portfolioMessage { margin-top: 15px; }
+
+.project-card img {
+  width: 100%;
+  max-width: 260px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 7px;
+  margin: 12px 0;
+  display: block;
+}
+
+.section-heading { color: #d4af37; margin-bottom: 10px; }
+.empty { padding: 20px 0; color: #888; }
+
+.analytics-heading { color: #d4af37; margin-bottom: 8px; }
+.analytics-subtitle { margin-bottom: 22px; }
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.stat-card {
+  background: #202020;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 22px 15px;
+  border-bottom: 3px solid #d4af37;
+  transition: .3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: #d4af37;
+}
+
+.stat-icon { font-size: 25px; margin-bottom: 15px; }
+.stat-card h3 { color: #d4af37; font-size: 30px; margin-bottom: 8px; }
+.stat-card p { color: #aaa; font-size: 13px; letter-spacing: .5px; }
+.analytics-status { font-size: 12px; color: #888; margin-top: 18px; }
+
+.monthly-section {
+  margin-top: 35px;
+  padding-top: 25px;
+  border-top: 1px solid #333;
+}
+
+.monthly-section h2 { color: #d4af37; margin-bottom: 8px; }
+.monthly-subtitle { color: #888; font-size: 13px; margin-bottom: 25px; }
+
+.monthly-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+  margin-top: 20px;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 75px 1fr 35px;
+  align-items: center;
+  gap: 12px;
+}
+
+.chart-label { color: #ccc; font-size: 13px; }
+
+.chart-bar-track {
+  height: 13px;
+  background: #292929;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #8f7020, #d4af37, #f5df91);
+  border-radius: 20px;
+  transition: width .7s ease;
+}
+
+.chart-count {
+  color: #d4af37;
+  font-size: 13px;
+  text-align: right;
+  font-weight: bold;
+}
+
+/* VISITOR AND REVENUE CARDS */
+
+.analytics-card {
+  background: #202020;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding: 20px;
+  border-bottom: 3px solid #d4af37;
+}
+
+.analytics-card h3 {
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.analytics-card p {
+  color: #d4af37;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+/* EXPORT REPORTS */
+
+.export-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.export-buttons button {
+  margin: 0;
+  padding: 14px 18px;
+}
+
+.export-note {
+  color: #888;
+  font-size: 13px;
+  margin-top: 15px;
+}
+
+@media(max-width: 800px) {
+  .analytics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media(max-width: 600px) {
+  header { padding: 18px; }
+  main { margin: 20px auto; }
+  .panel { padding: 20px; }
+  .analytics-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card { padding: 17px 12px; }
+  .stat-card h3 { font-size: 25px; }
+  .stat-card p { font-size: 11px; }
+  .chart-row { grid-template-columns: 55px 1fr 25px; gap: 8px; }
+  .chart-label, .chart-count { font-size: 11px; }
+  .export-buttons { flex-direction: column; }
+  .export-buttons button { width: 100%; }
+}
+/* EXTRA MOBILE RESPONSIVENESS */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
+button {
+  min-height: 44px;
+}
+
+.analytics-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.chart-row {
+  min-width: 0;
+}
+
+.chart-label,
+.chart-count {
+  overflow-wrap: anywhere;
+}
+
+#messages,
+#revenueRecords,
+#portfolioList,
+#recentInquiries {
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 800px) {
+  .analytics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  main {
+    width: 100%;
+    padding: 14px;
+  }
+
+  .panel {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 16px;
+  }
+
+  header h2 {
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  header span {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  main {
+    margin: 12px auto;
+    padding: 10px;
+  }
+
+  .panel {
+    padding: 15px;
+    border-radius: 9px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 19px;
+  }
+
+  .analytics-grid {
+    gap: 8px;
+  }
+
+  .stat-card,
+  .analytics-card {
+    padding: 14px 10px;
+  }
+
+  .stat-card h3 {
+    font-size: 22px;
+  }
+
+  .analytics-card p {
+    font-size: 20px;
+    overflow-wrap: anywhere;
+  }
+
+  .export-buttons {
+    flex-direction: column;
+  }
+
+  .export-buttons button {
+    width: 100%;
+  }
+
+  .chart-row {
+    grid-template-columns: 48px minmax(0, 1fr) 25px;
+    gap: 6px;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h2>TRIPOD VISION</h2>
+  <span>ADMIN DASHBOARD</span>
+</header>
+
+<main>
+
+<section class="panel" id="loginPanel">
+  <h1>Admin Login</h1>
+  <p>Welcome to Tripod Vision administration.</p>
+  <input type="password" id="password" placeholder="Enter admin password">
+  <button id="loginBtn">LOGIN</button>
+  <p id="loginMessage"></p>
+</section>
+
+<section id="dashboard">
+
+  <div class="panel">
+    <h1>Welcome, Admin</h1>
+    <p>Manage your Tripod Vision website from here.</p>
+    <button class="logout" id="logoutBtn">LOGOUT</button>
+    <button id="refreshBtn">REFRESH MESSAGES</button>
+  </div>
+
+  <div class="panel">
+    <h2 class="analytics-heading">Dashboard Analytics</h2>
+    <p class="analytics-subtitle">Your website performance at a glance.</p>
+
+    <div class="analytics-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📸</div>
+        <h3 id="totalProjects">0</h3>
+        <p>TOTAL PROJECTS</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💬</div>
+        <h3 id="totalMessages">0</h3>
+        <p>TOTAL MESSAGES</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📩</div>
+        <h3 id="unreadMessages">0</h3>
+        <p>UNREAD MESSAGES</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <h3 id="readMessages">0</h3>
+        <p>READ MESSAGES</p>
+      </div>
+    </div>
+
+    <p class="analytics-status" id="analyticsStatus">
+      Analytics will update automatically.
+    </p>
+
+    <div class="monthly-section">
+      <h2>Monthly Messages Analytics</h2>
+      <p class="monthly-subtitle">Customer inquiries received during the last 12 months.</p>
+      <div id="monthlyChart" class="monthly-chart">
+        <p class="empty">Monthly analytics loading...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="section-heading">Recent Inquiries</h2>
+    <p>Latest 5 customer messages received on your website.</p>
+    <div id="recentInquiries">
+      <p class="empty">Loading recent inquiries...</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="section-heading">Website Visitor Analytics</h2>
+
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <h3>Total Unique Visitors</h3>
+        <p id="totalVisitors">0</p>
+      </div>
+      <div class="analytics-card">
+        <h3>Today's Visitors</h3>
+        <p id="todayVisitors">0</p>
+      </div>
+      <div class="analytics-card">
+        <h3>This Month's Visitors</h3>
+        <p id="monthlyVisitors">0</p>
+      </div>
+    </div>
+
+    <h3 class="section-heading">Monthly Visitors Chart</h3>
+    <div id="visitorChart" class="monthly-chart">
+      Loading visitor analytics...
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="section-heading">Monthly Revenue Analytics</h2>
+
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <h3>Total Revenue</h3>
+        <p>PKR <span id="totalRevenue">0</span></p>
+      </div>
+      <div class="analytics-card">
+        <h3>This Month</h3>
+        <p>PKR <span id="monthlyRevenue">0</span></p>
+      </div>
+    </div>
+
+    <h3 class="section-heading">Monthly Revenue Chart</h3>
+    <div id="revenueChart" class="monthly-chart">
+      Loading revenue analytics...
+    </div>
+
+    <h3 class="section-heading">Add New Payment</h3>
+
+    <form id="revenueForm">
+      <input type="text" id="revenueProject" placeholder="Project Name" required>
+      <input type="number" id="revenueAmount" placeholder="Amount (PKR)" min="1" required>
+      <input type="date" id="revenueDate" required>
+      <input type="text" id="revenueDescription" placeholder="Payment Description">
+      <button type="submit">Save Payment</button>
+    </form>
+
+    <p id="revenueMessage"></p>
+
+    <h3 class="section-heading">Payment Records</h3>
+    <div id="revenueRecords">
+      <p>Loading payment records...</p>
+    </div>
+  </div>
+
+  <!-- EXPORT REPORTS -->
+  <div class="panel">
+    <h2 class="section-heading">Export Reports</h2>
+    <p>Download your dashboard reports as CSV files. You can open these files in Microsoft Excel or Google Sheets.</p>
+
+    <div class="export-buttons">
+      <button type="button" id="exportContactsBtn">📩 EXPORT CONTACTS</button>
+      <button type="button" id="exportRevenueBtn">💰 EXPORT REVENUE</button>
+      <button type="button" id="exportVisitorsBtn">👥 EXPORT VISITORS</button>
+    </div>
+
+    <p class="export-note" id="exportMessage">
+      Reports will be downloaded to your computer.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2 class="section-heading">Portfolio Management</h2>
+    <p>Add your photography, videography and creative projects.</p>
+
+    <form id="portfolioForm" enctype="multipart/form-data">
+      <input type="text" id="projectTitle" placeholder="Project Title" required>
+
+      <select id="projectCategory" required>
+        <option value="">Select Category</option>
+        <option value="Web Design">Web Design</option>
+        <option value="Branding">Branding</option>
+        <option value="Development">Development</option>
+        <option value="Graphics">Graphics</option>
+        <option value="Photography">Photography</option>
+        <option value="Videography">Videography</option>
+        <option value="E-Commerce">E-Commerce</option>
+      </select>
+
+      <textarea id="projectDescription" placeholder="Project Description"></textarea>
+
+      <label for="projectImage">Choose Image From Computer</label>
+      <input type="file" id="projectImage" accept="image/jpeg,image/png,image/webp" required>
+
+      <button type="submit">UPLOAD PROJECT</button>
+    </form>
+
+    <p id="portfolioMessage"></p>
+
+    <h2 style="margin-top:35px;">Your Portfolio Projects</h2>
+    <div id="portfolioList">
+      <p class="empty">Loading projects...</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 class="section-heading">Customer Inquiries</h2>
+    <div id="messages">Loading messages...</div>
+  </div>
+
+</section>
+</main>
+
+<script src="admin.js"></script>
+</body>
+</html>
